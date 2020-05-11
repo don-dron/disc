@@ -9,12 +9,13 @@ public class Edge {
     public int flow;
     public int capacity;
     public int length;
+    public int residualCapacity;
 
     public Edge(Node source, Node target) {
         this.source = source;
         this.target = target;
 
-        source.neighbours.put(target,this);
+        source.neighbours.put(target, this);
     }
 
     public Edge(Edge edge) {
@@ -24,12 +25,13 @@ public class Edge {
         this.capacity = edge.capacity;
         this.length = edge.length;
         this.type = edge.type;
+        this. residualCapacity = edge.residualCapacity;
 
-        source.neighbours.put(target,this);
+        source.neighbours.put(target, this);
     }
 
     public String toString() {
-        return "Edge\n"+graph.nodes.indexOf(source) + " -> " + graph.nodes.indexOf(target) + "\n" + "Flow: " + flow + "\nCapacity: " + capacity + "\nLength: " + length + "\n";
+        return "Edge\n" + graph.nodes.indexOf(source) + " -> " + graph.nodes.indexOf(target) + "\n" + "Flow: " + flow + "\nCapacity: " + capacity + "\nLength: " + length + "\n";
     }
 
     public enum EdgeTypes {

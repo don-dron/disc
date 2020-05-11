@@ -39,18 +39,20 @@ public class Dikstra {
                 if (edge != null) {
                     int edgeLength = edge.length;
 
-                    int changedIndex = graph.nodes.indexOf(changed);
-                    int currentIndex = graph.nodes.indexOf(current);
+                    if(edgeLength>0) {
+                        int changedIndex = graph.nodes.indexOf(changed);
+                        int currentIndex = graph.nodes.indexOf(current);
 
-                    int distanceSource = distances.get(currentIndex);
-                    int distanceTarget = distances.get(changedIndex);
+                        int distanceSource = distances.get(currentIndex);
+                        int distanceTarget = distances.get(changedIndex);
 
-                    if (distanceTarget > distanceSource + edgeLength) {
-                        distances.set(changedIndex, distanceSource + edgeLength);
-                        paths.get(changedIndex).add(current);
-                        List<Node> currentPath = new ArrayList<>(paths.get(currentIndex));
-                        currentPath.add(current);
-                        paths.set(changedIndex, currentPath);
+                        if (distanceTarget > distanceSource + edgeLength) {
+                            distances.set(changedIndex, distanceSource + edgeLength);
+                            paths.get(changedIndex).add(current);
+                            List<Node> currentPath = new ArrayList<>(paths.get(currentIndex));
+                            currentPath.add(current);
+                            paths.set(changedIndex, currentPath);
+                        }
                     }
                 }
 

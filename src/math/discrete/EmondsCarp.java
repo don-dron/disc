@@ -7,18 +7,16 @@ public class EmondsCarp {
     public void minCostMaxFlowCalculate(Graph graph) {
         graph.zeroingFlows();
 
-        Map<Edge, Edge> mirrorEdges = new HashMap<>();
-
         Graph residualNetwork = graph.buildResidualNetwork();
 
-        for (int i = 0; i < residualNetwork.edges.size(); i += 2) {
-            residualNetwork.edges.get(i).length = 1;
-            residualNetwork.edges.get(i + 1).length = 1;
-            mirrorEdges.put(residualNetwork.edges.get(i), residualNetwork.edges.get(i + 1));
-            mirrorEdges.put(residualNetwork.edges.get(i + 1), residualNetwork.edges.get(i));
-        }
-
         for (; ; ) {
+            for (int i = 0; i < residualNetwork.edges.size(); i += 1) {
+                if (residualNetwork.edges.get(i).residualCapacity == 0) {
+                    residualNetwork.edges.get(i).length = -1;
+                } else {
+                    residualNetwork.edges.get(i).length = 1;
+                }
+            }
 
             List<Node> shortestPath = new Dikstra().getShortestPath(residualNetwork, residualNetwork.nodes.get(0),
                     residualNetwork.nodes.get(residualNetwork.nodes.size() - 1));
@@ -26,8 +24,6 @@ public class EmondsCarp {
             if (shortestPath.size() <= 1) {
                 break;
             }
-
-            System.out.println(shortestPath.stream().map(node -> Integer.toString(residualNetwork.nodes.indexOf(node))).collect(Collectors.joining(", ")));
 
             List<Edge> shortestPathEdges = new ArrayList<>();
 
@@ -39,36 +35,30 @@ public class EmondsCarp {
             int minCapacity = Collections.min(shortestPathEdges, new Comparator<Edge>() {
                 @Override
                 public int compare(Edge first, Edge second) {
-                    return first.capacity - second.capacity;
+                    return first.residualCapacity - second.residualCapacity;
                 }
-            }).capacity;
+            }).residualCapacity;
 
-            for (Edge modifyEdge : shortestPathEdges) {
-                Edge mirrorEdge = mirrorEdges.get(modifyEdge);
+            for (Edge edge : shortestPathEdges) {
+                Edge modifyEdge = edge;
+                Edge mirrorEdge = residualNetwork.edges.stream().filter(edges -> edges.source.equals(edge.target) && edges.target.equals(edge.source)).findFirst().get();
+
                 modifyEdge.flow = modifyEdge.flow + minCapacity;
                 mirrorEdge.flow = mirrorEdge.flow - minCapacity;
 
-                modifyEdge.capacity = modifyEdge.capacity-modifyEdge.flow;
-                mirrorEdge.capacity = modifyEdge.flow;
-
-                if (modifyEdge.capacity - modifyEdge.flow == 0 && residualNetwork.edges.contains(modifyEdge)) {
-                    residualNetwork.edges.remove(modifyEdge);
-                    modifyEdge.source.neighbours.remove(modifyEdge.target);
-                } else if (modifyEdge.capacity - modifyEdge.flow != 0 && !residualNetwork.edges.contains(modifyEdge)) {
-                    residualNetwork.edges.add(modifyEdge);
-                    modifyEdge.source.neighbours.put(modifyEdge.target, modifyEdge);
-                }
-
-                if (mirrorEdge.capacity - mirrorEdge.flow == 0 && residualNetwork.edges.contains(mirrorEdge)) {
-                    residualNetwork.edges.remove(mirrorEdge);
-                    mirrorEdge.source.neighbours.remove(mirrorEdge.target);
-                } else if (mirrorEdge.capacity - mirrorEdge.flow != 0 && !residualNetwork.edges.contains(mirrorEdge)) {
-                    residualNetwork.edges.add(mirrorEdge);
-                    mirrorEdge.source.neighbours.put(mirrorEdge.target, mirrorEdge);
+                if (modifyEdge.type == Edge.EdgeTypes.FORWARD) {
+                    modifyEdge.residualCapacity = modifyEdge.capacity - modifyEdge.flow;
+                    mirrorEdge.residualCapacity = modifyEdge.flow;
+                } else {
+                    mirrorEdge.residualCapacity = mirrorEdge.capacity - mirrorEdge.flow;
+                    modifyEdge.residualCapacity = mirrorEdge.flow;
                 }
             }
         }
 
-        graph.edges.stream().forEach(edge -> System.out.println(edge.flow));
+        Iterator<Edge> iterator = graph.edges.iterator();
+        for (Edge edge : residualNetwork.edges.stream().filter(edge -> edge.type == Edge.EdgeTypes.FORWARD).collect(Collectors.toList())) {
+            iterator.next().flow = edge.flow;
+        }
     }
 }

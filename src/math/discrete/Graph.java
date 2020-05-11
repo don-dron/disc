@@ -37,16 +37,20 @@ public class Graph {
             network.addNode(newNode);
         }
 
-        for (Edge edge : edges.stream().filter(edge -> edge.capacity > edge.flow).collect(Collectors.toList())) {
+        for (Edge edge : edges) {
             Node source = network.nodes.get(nodes.indexOf(edge.source));
             Node target = network.nodes.get(nodes.indexOf(edge.target));
 
             Edge newEdge = new Edge(source, target);
-            newEdge.capacity = edge.capacity - edge.flow;
+            newEdge.flow = edge.flow;
+            newEdge.capacity = edge.capacity;
+            newEdge.residualCapacity = edge.capacity - edge.flow;
             network.addEdge(newEdge);
 
             newEdge = new Edge(target, source);
-            newEdge.capacity = edge.flow;
+            newEdge.flow = edge.flow;
+            newEdge.capacity = edge.capacity;
+            newEdge.residualCapacity = edge.flow;
             newEdge.type = Edge.EdgeTypes.BACKWARD;
             network.addEdge(newEdge);
         }
