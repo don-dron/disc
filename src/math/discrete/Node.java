@@ -1,16 +1,13 @@
 package math.discrete;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Node {
     public Graph graph;
     public NodeTypes type = NodeTypes.NONE;
-    public Map<Node,Edge> neighbours = new HashMap<>();
-    public int distance;
+    public Map<Node,Edge> neighbours = new LinkedHashMap<>();
+    public int distance=-1;
     public int mark;
 
     public Node(){
@@ -20,7 +17,7 @@ public class Node {
     public Node(Node node){
         this.graph = node.graph;
         this.type = node.type;
-        this.neighbours = new HashMap<>(node.neighbours);
+        this.neighbours = new LinkedHashMap<>(neighbours);
     }
 
     public String toString(){

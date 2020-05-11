@@ -1,5 +1,7 @@
 package math.discrete;
 
+import java.util.Iterator;
+
 public class Edge {
     public Graph graph;
     public Node source;
@@ -9,6 +11,7 @@ public class Edge {
     public int flow;
     public int capacity;
     public int length=1;
+    public int index;
     public int residualCapacity;
 
     public Edge(Node source, Node target) {
@@ -17,6 +20,7 @@ public class Edge {
 
         source.neighbours.put(target, this);
     }
+
 
     public Edge(Edge edge) {
         this.source = edge.source;
@@ -27,12 +31,14 @@ public class Edge {
         this.type = edge.type;
         this.residualCapacity = edge.residualCapacity;
         this.graph = edge.graph;
+        this.index = edge.index;
 
         source.neighbours.put(target, this);
     }
 
     public String toString() {
-        return "Edge\n" + graph.nodes.indexOf(source) + " -> " + graph.nodes.indexOf(target) + "\n" + "Flow: " + flow + "\nCapacity: " + capacity + "\nLength: " + length + "\n";
+        return "Edge\n" + graph.nodes.indexOf(source) + " -> " + graph.nodes.indexOf(target) + " " + "Flow: " + flow +
+                " Capacity: " + capacity + " Length: " + length + " ResidualCapacity: " + residualCapacity;
     }
 
     public enum EdgeTypes {
