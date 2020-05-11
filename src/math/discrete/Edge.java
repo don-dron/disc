@@ -25,7 +25,8 @@ public class Edge {
         this.capacity = edge.capacity;
         this.length = edge.length;
         this.type = edge.type;
-        this. residualCapacity = edge.residualCapacity;
+        this.residualCapacity = edge.residualCapacity;
+        this.graph = edge.graph;
 
         source.neighbours.put(target, this);
     }

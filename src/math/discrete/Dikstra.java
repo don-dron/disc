@@ -6,14 +6,9 @@ import java.util.*;
 public class Dikstra {
     public List<List<Node>> calculate(Graph graph, Node start) {
         List<Integer> distances = new ArrayList<>();
-        Comparator<Node> comparator = new Comparator<Node>() {
-            @Override
-            public int compare(Node first, Node second) {
-                return distances.get(graph.nodes.indexOf(first)) - distances.get(graph.nodes.indexOf(second));
-            }
-        };
+        Comparator<Node> comparator = (first, second) -> distances.get(graph.nodes.indexOf(first)) - distances.get(graph.nodes.indexOf(second));
 
-        PriorityQueue<Node> queue = new PriorityQueue<Node>(graph.nodes.size(), comparator);
+        PriorityQueue<Node> queue = new PriorityQueue<>(graph.nodes.size(), comparator);
 
         List<List<Node>> paths = new ArrayList<>();
 
@@ -39,7 +34,7 @@ public class Dikstra {
                 if (edge != null) {
                     int edgeLength = edge.length;
 
-                    if(edgeLength>0) {
+                    if (edgeLength > 0) {
                         int changedIndex = graph.nodes.indexOf(changed);
                         int currentIndex = graph.nodes.indexOf(current);
 

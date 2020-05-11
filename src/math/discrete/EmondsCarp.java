@@ -32,26 +32,21 @@ public class EmondsCarp {
                 shortestPathEdges.add(node.neighbours.get(shortestPath.get(i + 1)));
             }
 
-            int minCapacity = Collections.min(shortestPathEdges, new Comparator<Edge>() {
-                @Override
-                public int compare(Edge first, Edge second) {
-                    return first.residualCapacity - second.residualCapacity;
-                }
-            }).residualCapacity;
+            int minCapacity = Collections.min(shortestPathEdges, (first, second) ->
+                    first.residualCapacity - second.residualCapacity).residualCapacity;
 
             for (Edge edge : shortestPathEdges) {
-                Edge modifyEdge = edge;
                 Edge mirrorEdge = residualNetwork.edges.stream().filter(edges -> edges.source.equals(edge.target) && edges.target.equals(edge.source)).findFirst().get();
 
-                modifyEdge.flow = modifyEdge.flow + minCapacity;
+                edge.flow = edge.flow + minCapacity;
                 mirrorEdge.flow = mirrorEdge.flow - minCapacity;
 
-                if (modifyEdge.type == Edge.EdgeTypes.FORWARD) {
-                    modifyEdge.residualCapacity = modifyEdge.capacity - modifyEdge.flow;
-                    mirrorEdge.residualCapacity = modifyEdge.flow;
+                if (edge.type == Edge.EdgeTypes.FORWARD) {
+                    edge.residualCapacity = edge.capacity - edge.flow;
+                    mirrorEdge.residualCapacity = edge.flow;
                 } else {
                     mirrorEdge.residualCapacity = mirrorEdge.capacity - mirrorEdge.flow;
-                    modifyEdge.residualCapacity = mirrorEdge.flow;
+                    edge.residualCapacity = mirrorEdge.flow;
                 }
             }
         }
