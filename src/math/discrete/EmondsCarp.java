@@ -9,7 +9,7 @@ public class EmondsCarp {
 
         Graph residualNetwork = graph.buildResidualNetwork();
 
-        for (; !FlowFilling.flowFilling(residualNetwork); ) ;
+        for (; FlowFilling.flowFilling(residualNetwork); ) ;
 
         Iterator<Edge> iterator = graph.getEdgesIterator();
         for (Edge edge : residualNetwork.getEdges().stream().filter(edge -> edge.type == Edge.EdgeTypes.FORWARD).collect(Collectors.toList())) {

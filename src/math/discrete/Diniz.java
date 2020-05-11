@@ -1,7 +1,5 @@
 package math.discrete;
 
-import java.util.*;
-import java.util.concurrent.Flow;
 import java.util.stream.Collectors;
 
 public class Diniz {
@@ -27,7 +25,7 @@ public class Diniz {
 
     public boolean findBlockingFlow(Graph layoutNetwork) {
         boolean flag = true;
-        for (; !FlowFilling.flowFilling(layoutNetwork); ) {
+        for (; FlowFilling.flowFilling(layoutNetwork); ) {
             flag = false;
         }
         return flag;

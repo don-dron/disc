@@ -118,7 +118,7 @@ public class Graph {
             Node source = network.nodes.get(nodes.indexOf(edge.source));
             Node target = network.nodes.get(nodes.indexOf(edge.target));
 
-            if (edge.source.distance != -1 && edge.target.distance != -1 && edge.source.distance < edge.target.distance && edge.type == Edge.EdgeTypes.FORWARD) {
+            if (edge.source.distance != -1 && edge.target.distance != -1 && edge.type == Edge.EdgeTypes.FORWARD) {
                 Edge newEdge = new Edge(source, target);
                 addEdgeToLayoutNetwork(network, newEdge, edge);
 
@@ -127,7 +127,7 @@ public class Graph {
             }
         }
         network.getEdges().stream().forEach(edge -> {
-            if (edge.residualCapacity == 0) {
+            if (edge.residualCapacity == 0 || edge.source.distance < edge.target.distance) {
                 edge.length = -1;
             } else {
                 edge.length = 1;

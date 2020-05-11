@@ -19,7 +19,7 @@ public class FlowFilling {
 
         if (!(shortestPath.contains(residualNetwork.nodes.get(residualNetwork.nodes.size() - 1))
                 && shortestPath.contains(residualNetwork.nodes.get(0)))) {
-            return true;
+            return false;
         }
 
         List<Edge> shortestPathEdges = new ArrayList<>();
@@ -46,6 +46,6 @@ public class FlowFilling {
                 edge.residualCapacity = mirrorEdge.flow;
             }
         }
-        return false;
+        return true;
     }
 }
