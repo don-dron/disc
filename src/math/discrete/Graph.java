@@ -61,4 +61,28 @@ public class Graph {
 
         return network;
     }
+
+    public Graph buildLayoutNetwork() {
+        Graph network = new Graph();
+
+        new Dikstra().calculate(this, nodes.get(0));
+
+        for (Node node : nodes) {
+            Node newNode = new Node(node);
+            newNode.neighbours.clear();
+            network.addNode(newNode);
+        }
+
+        for (Edge edge : edges) {
+            Node source = network.nodes.get(nodes.indexOf(edge.source));
+            Node target = network.nodes.get(nodes.indexOf(edge.target));
+
+            if (edge.source.distance != edge.target.distance && edge.type == Edge.EdgeTypes.FORWARD) {
+                Edge newEdge = new Edge(source, target);
+                network.addEdge(newEdge);
+            }
+        }
+
+        return network;
+    }
 }

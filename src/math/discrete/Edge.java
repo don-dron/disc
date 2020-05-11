@@ -8,7 +8,7 @@ public class Edge {
 
     public int flow;
     public int capacity;
-    public int length;
+    public int length=1;
     public int residualCapacity;
 
     public Edge(Node source, Node target) {

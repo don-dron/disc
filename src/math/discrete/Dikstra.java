@@ -1,6 +1,5 @@
 package math.discrete;
 
-import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import java.util.*;
 
 public class Dikstra {
@@ -34,6 +33,7 @@ public class Dikstra {
                 if (edge != null) {
                     int edgeLength = edge.length;
 
+                    // Ignore negative edges
                     if (edgeLength > 0) {
                         int changedIndex = graph.nodes.indexOf(changed);
                         int currentIndex = graph.nodes.indexOf(current);
@@ -58,6 +58,7 @@ public class Dikstra {
         }
 
         for (int i = 0; i < paths.size(); i++) {
+            graph.nodes.get(i).distance = paths.get(i).size();
             paths.get(i).add(graph.nodes.get(i));
         }
 

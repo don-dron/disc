@@ -10,6 +10,8 @@ public class Node {
     public Graph graph;
     public NodeTypes type = NodeTypes.NONE;
     public Map<Node,Edge> neighbours = new HashMap<>();
+    public int distance;
+    public int mark;
 
     public Node(){
 
