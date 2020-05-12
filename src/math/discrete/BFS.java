@@ -14,7 +14,7 @@ public class BFS {
         public void action(Node parent, Node current);
     }
 
-    public void run(Graph graph, Node start) {
+    public void run(Graph graph) {
         for (Node node : graph.nodes) {
             node.mark = 0;
         }

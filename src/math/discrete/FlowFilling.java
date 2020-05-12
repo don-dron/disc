@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class FlowFilling {
-    public static boolean flowFilling(Graph residualNetwork) {
+    public boolean flowFilling(Graph residualNetwork) {
         residualNetwork.getEdges().stream().forEach(edge -> {
             if (edge.residualCapacity == 0) {
                 edge.length = -1;

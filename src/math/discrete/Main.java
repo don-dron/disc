@@ -65,8 +65,8 @@ public class Main {
         edge4T.capacity = 10;
         graph.addEdge(edge4T);
 
-        new Diniz().minCostMaxFlowCalculate(graph);
-        new EmondsCarp().minCostMaxFlowCalculate(graph);
+        new Diniz().maxFlowCalculate(graph);
+        new EmondsCarp().maxFlowCalculate(graph);
     }
 
     public static void test1() {
@@ -134,8 +134,8 @@ public class Main {
         graph.addEdge(edgeEG);
 
 
-        new Diniz().minCostMaxFlowCalculate(graph);
-        new EmondsCarp().minCostMaxFlowCalculate(graph);
+        new Diniz().maxFlowCalculate(graph);
+        new EmondsCarp().maxFlowCalculate(graph);
     }
 
     public static void test2(){
@@ -199,8 +199,8 @@ public class Main {
         edgeFG.capacity = 10;
         graph.addEdge(edgeFG);
 
-        new Diniz().minCostMaxFlowCalculate(graph);
-        new EmondsCarp().minCostMaxFlowCalculate(graph);
+        new Diniz().maxFlowCalculate(graph);
+        new EmondsCarp().maxFlowCalculate(graph);
     }
 
     public static void test3(){
@@ -299,7 +299,7 @@ public class Main {
         edge64.capacity = 3;
         graph.addEdge(edge64);
 
-        new Diniz().minCostMaxFlowCalculate(graph);
-        new EmondsCarp().minCostMaxFlowCalculate(graph);
+        new Diniz().maxFlowCalculate(graph);
+        new EmondsCarp().maxFlowCalculate(graph);
     }
 }

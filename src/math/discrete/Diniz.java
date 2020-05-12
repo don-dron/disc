@@ -3,7 +3,15 @@ package math.discrete;
 import java.util.stream.Collectors;
 
 public class Diniz {
-    public void minCostMaxFlowCalculate(Graph graph) {
+    public boolean findBlockingFlow(Graph layoutNetwork) {
+        boolean flag = true;
+        while (new FlowFilling().flowFilling(layoutNetwork)) {
+            flag = false;
+        }
+        return flag;
+    }
+
+    public void maxFlowCalculate(Graph graph) {
         graph.zeroingFlows();
         Graph residualNetwork;
         Graph layoutNetwork;
@@ -21,13 +29,5 @@ public class Diniz {
 
         }
         System.out.println(graph.getFlows());
-    }
-
-    public boolean findBlockingFlow(Graph layoutNetwork) {
-        boolean flag = true;
-        for (; FlowFilling.flowFilling(layoutNetwork); ) {
-            flag = false;
-        }
-        return flag;
     }
 }

@@ -102,7 +102,7 @@ public class Graph {
             }
             paths.put(current, lastPath);
         };
-        bfs.run(this, nodes.get(0));
+        bfs.run(this);
 
         for (Node node : nodes) {
             node.distance = paths.get(node).size() + 1;
