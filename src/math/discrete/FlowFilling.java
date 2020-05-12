@@ -32,19 +32,21 @@ public class FlowFilling {
         int minCapacity = Collections.min(shortestPathEdges, (first, second) ->
                 first.residualCapacity - second.residualCapacity).residualCapacity;
 
-        for (Edge edge : shortestPathEdges) {
-            Edge mirrorEdge = residualNetwork.getEdges().stream().filter(edges -> edges.source.equals(edge.target) && edges.target.equals(edge.source)).findFirst().get();
+        for (Edge modifyEdge : shortestPathEdges) {
+            Edge edge = modifyEdge;
+            Edge mirrorEdge = residualNetwork.getEdges().stream().filter(edges -> edges.source.equals(modifyEdge.target) && edges.target.equals(modifyEdge.source)).findFirst().get();
+
+            if (edge.type == Edge.EdgeTypes.BACKWARD) {
+                Edge temp = edge;
+                edge = mirrorEdge;
+                mirrorEdge = temp;
+            }
 
             edge.flow = edge.flow + minCapacity;
-            mirrorEdge.flow = mirrorEdge.flow - minCapacity;
+            mirrorEdge.flow = -edge.flow;
 
-            if (edge.type == Edge.EdgeTypes.FORWARD) {
-                edge.residualCapacity = edge.capacity - edge.flow;
-                mirrorEdge.residualCapacity = edge.flow;
-            } else {
-                mirrorEdge.residualCapacity = mirrorEdge.capacity - mirrorEdge.flow;
-                edge.residualCapacity = mirrorEdge.flow;
-            }
+            edge.residualCapacity = edge.capacity - edge.flow;
+            mirrorEdge.residualCapacity = mirrorEdge.capacity - mirrorEdge.flow;
         }
         return true;
     }

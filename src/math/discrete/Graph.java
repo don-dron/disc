@@ -57,14 +57,14 @@ public class Graph {
             Edge newEdge = new Edge(source, target);
             newEdge.flow = edge.flow;
             newEdge.capacity = edge.capacity;
-            newEdge.residualCapacity = edge.capacity - edge.flow;
+            newEdge.residualCapacity = newEdge.capacity - newEdge.flow;
             network.addEdge(newEdge);
             newEdge.index = edge.index;
 
             newEdge = new Edge(target, source);
-            newEdge.flow = edge.flow;
-            newEdge.capacity = edge.capacity;
-            newEdge.residualCapacity = edge.flow;
+            newEdge.flow = -edge.flow;
+            newEdge.capacity = 0;
+            newEdge.residualCapacity = newEdge.capacity - newEdge.flow;
             newEdge.type = Edge.EdgeTypes.BACKWARD;
             network.addEdge(newEdge);
             newEdge.index = edge.index;
