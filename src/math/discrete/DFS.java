@@ -3,7 +3,7 @@ package math.discrete;
 import java.util.Stack;
 
 public class DFS {
-    public void run(Graph graph, Node start) {
+    public void run(Graph graph) {
         for (Node node : graph.nodes) {
             node.mark = 0;
         }
