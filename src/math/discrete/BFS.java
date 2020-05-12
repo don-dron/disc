@@ -1,6 +1,8 @@
 package math.discrete;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.HashMap;
+import java.util.Map;
 
 public class BFS {
     public Map<Node, Node> nodeToParent = new HashMap<>();

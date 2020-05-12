@@ -1,5 +1,9 @@
 package math.discrete;
 
+import math.discrete.*;
+
+import static org.junit.Assert.assertEquals;
+
 public class Main {
     public static void main(String[] args) {
         test();
@@ -65,8 +69,21 @@ public class Main {
         edge4T.capacity = 10;
         graph.addEdge(edge4T);
 
+        String rightResult = "0 -> 1 10/10\n" +
+                "0 -> 2 9/10\n" +
+                "1 -> 3 4/4\n" +
+                "1 -> 2 0/2\n" +
+                "1 -> 4 6/8\n" +
+                "2 -> 4 9/9\n" +
+                "4 -> 3 5/6\n" +
+                "3 -> 5 9/10\n" +
+                "4 -> 5 10/10\n";
+
         new Diniz().maxFlowCalculate(graph);
+        assertEquals (rightResult,graph.getFlows());
+
         new EmondsCarp().maxFlowCalculate(graph);
+        assertEquals (rightResult,graph.getFlows());
     }
 
     public static void test1() {
@@ -134,11 +151,26 @@ public class Main {
         graph.addEdge(edgeEG);
 
 
+        String rightResult = "0 -> 1 3/3\n" +
+                "0 -> 3 3/3\n" +
+                "2 -> 0 0/3\n" +
+                "1 -> 2 3/4\n" +
+                "2 -> 3 1/1\n" +
+                "2 -> 4 2/2\n" +
+                "4 -> 1 0/1\n" +
+                "3 -> 4 3/2\n" +
+                "3 -> 5 5/6\n" +
+                "5 -> 6 5/9\n" +
+                "4 -> 6 1/1\n";
+
         new Diniz().maxFlowCalculate(graph);
+        assertEquals (rightResult,graph.getFlows());
+
         new EmondsCarp().maxFlowCalculate(graph);
+        assertEquals (rightResult,graph.getFlows());
     }
 
-    public static void test2(){
+    public static void test2() {
         Graph graph = new Graph();
 
 
@@ -199,11 +231,24 @@ public class Main {
         edgeFG.capacity = 10;
         graph.addEdge(edgeFG);
 
+        String rightResult = "0 -> 1 20/20\n" +
+                "0 -> 2 12/15\n" +
+                "1 -> 3 0/4\n" +
+                "2 -> 3 3/4\n" +
+                "1 -> 4 20/21\n" +
+                "2 -> 5 9/9\n" +
+                "3 -> 4 2/2\n" +
+                "3 -> 5 1/10\n" +
+                "4 -> 6 22/24\n" +
+                "5 -> 6 10/10\n";
         new Diniz().maxFlowCalculate(graph);
+        assertEquals (rightResult,graph.getFlows());
+
         new EmondsCarp().maxFlowCalculate(graph);
+        assertEquals (rightResult,graph.getFlows());
     }
 
-    public static void test3(){
+    public static void test3() {
         Graph graph = new Graph();
 
         Node nodes = new Node();
@@ -243,7 +288,6 @@ public class Main {
         graph.addEdge(edgeS5);
 
 
-
         Edge edge13 = new Edge(node1, node3);
         edge13.capacity = 2;
         graph.addEdge(edge13);
@@ -257,11 +301,9 @@ public class Main {
         graph.addEdge(edge14);
 
 
-
         Edge edge2t = new Edge(node2, nodet);
         edge2t.capacity = 6;
         graph.addEdge(edge2t);
-
 
 
         Edge edge34 = new Edge(node3, node4);
@@ -271,7 +313,6 @@ public class Main {
         Edge edge35 = new Edge(node3, node5);
         edge35.capacity = 7;
         graph.addEdge(edge35);
-
 
 
         Edge edge56 = new Edge(node5, node6);
@@ -295,11 +336,32 @@ public class Main {
         edge6T.capacity = 8;
         graph.addEdge(edge6T);
 
-        Edge edge64= new Edge(node6, node4);
+        Edge edge64 = new Edge(node6, node4);
         edge64.capacity = 3;
         graph.addEdge(edge64);
 
+
+        String rightResult = "0 -> 1 9/9\n" +
+                "0 -> 3 3/3\n" +
+                "0 -> 5 1/1\n" +
+                "1 -> 3 2/2\n" +
+                "1 -> 2 2/2\n" +
+                "1 -> 4 5/5\n" +
+                "2 -> 7 3/6\n" +
+                "3 -> 4 5/2\n" +
+                "3 -> 5 6/7\n" +
+                "5 -> 6 8/9\n" +
+                "4 -> 2 1/1\n" +
+                "4 -> 5 1/1\n" +
+                "4 -> 7 2/2\n" +
+                "6 -> 7 8/8\n" +
+                "6 -> 4 0/3\n";
+
+
         new Diniz().maxFlowCalculate(graph);
+        assertEquals (rightResult,graph.getFlows());
+
         new EmondsCarp().maxFlowCalculate(graph);
+        assertEquals (rightResult,graph.getFlows());
     }
 }

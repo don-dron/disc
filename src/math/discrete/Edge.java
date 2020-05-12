@@ -1,7 +1,5 @@
 package math.discrete;
 
-import java.util.Iterator;
-
 public class Edge {
     public Graph graph;
     public Node source;

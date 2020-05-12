@@ -15,7 +15,7 @@ public class Diniz {
         graph.zeroingFlows();
         Graph residualNetwork;
         Graph layoutNetwork;
-        for (; ; ) {
+        while (true) {
             residualNetwork = graph.buildResidualNetwork();
             layoutNetwork = residualNetwork.buildLayoutNetwork();
             boolean flag = findBlockingFlow(layoutNetwork);
@@ -26,8 +26,6 @@ public class Diniz {
             for (Edge edge : layoutNetwork.getEdges().stream().filter(edge -> edge.type == Edge.EdgeTypes.FORWARD).collect(Collectors.toList())) {
                 graph.getEdges().get(edge.index).flow = edge.flow;
             }
-
         }
-        System.out.println(graph.getFlows());
     }
 }
