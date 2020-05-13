@@ -1,6 +1,7 @@
 package math.discrete;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class Graph {
@@ -41,6 +42,16 @@ public class Graph {
         edges.stream().forEach(edge -> edge.flow = 0);
     }
 
+    public void updateDeactivatedEdges(Predicate<Edge> predicate) {
+        getEdges().stream().forEach(edge -> {
+            if (predicate.test(edge)) {
+                edge.active = false;
+            } else {
+                edge.active = true;
+            }
+        });
+    }
+
     public Graph buildResidualNetwork() {
         Graph network = new Graph();
 
@@ -58,7 +69,8 @@ public class Graph {
             newEdge.flow = edge.flow;
             newEdge.capacity = edge.capacity;
             newEdge.cost = edge.cost;
-            newEdge.residualCapacity =newEdge.capacity - newEdge.flow;
+            newEdge.length = newEdge.cost;
+            newEdge.residualCapacity = newEdge.capacity - newEdge.flow;
             network.addEdge(newEdge);
             newEdge.index = edge.index;
 
@@ -66,6 +78,7 @@ public class Graph {
             newEdge.flow = -edge.flow;
             newEdge.capacity = 0;
             newEdge.cost = -edge.cost;
+            newEdge.length = newEdge.cost;
             newEdge.residualCapacity = newEdge.capacity - newEdge.flow;
             newEdge.type = Edge.EdgeTypes.BACKWARD;
             network.addEdge(newEdge);
@@ -76,13 +89,44 @@ public class Graph {
             network.edges.forEach(System.out::println);
         }
 
-        network.getEdges().stream().forEach(edge -> {
-            if (edge.residualCapacity == 0) {
-                edge.active = false;
-            } else {
-                edge.active = true;
-            }
-        });
+        network.updateDeactivatedEdges(edge -> edge.residualCapacity == 0);
+        return network;
+    }
+
+    public Graph buildCostResidualNetwork() {
+        Graph network = new Graph();
+
+        for (Node node : nodes) {
+            Node newNode = new Node(node);
+            newNode.neighbours.clear();
+            network.addNode(newNode);
+        }
+
+        for (Edge edge : edges) {
+            Node source = network.nodes.get(nodes.indexOf(edge.source));
+            Node target = network.nodes.get(nodes.indexOf(edge.target));
+
+            Edge newEdge = new Edge(source, target);
+            newEdge.flow = edge.flow;
+            newEdge.capacity = edge.capacity;
+            newEdge.cost = edge.cost;
+            newEdge.length = newEdge.cost;
+            newEdge.residualCapacity = newEdge.cost * (newEdge.capacity - newEdge.flow);
+            network.addEdge(newEdge);
+            newEdge.index = edge.index;
+
+            newEdge = new Edge(target, source);
+            newEdge.flow = -edge.flow;
+            newEdge.capacity = 0;
+            newEdge.cost = -edge.cost;
+            newEdge.length = newEdge.cost;
+            newEdge.residualCapacity = newEdge.cost * (newEdge.capacity - newEdge.flow);
+            newEdge.type = Edge.EdgeTypes.BACKWARD;
+            network.addEdge(newEdge);
+            newEdge.index = edge.index;
+        }
+
+        network.updateDeactivatedEdges(edge -> edge.residualCapacity == 0);
         return network;
     }
 
@@ -107,7 +151,8 @@ public class Graph {
         bfs.run(this);
 
         for (Node node : nodes) {
-            node.distance = paths.get(node).size() + 1;
+            paths.get(node).add(node);
+            node.distance = paths.get(node).size();
         }
 
         for (Node node : nodes) {
@@ -128,14 +173,7 @@ public class Graph {
                 addEdgeToLayoutNetwork(network, newMirror, edges.stream().filter(edg -> edg.source.equals(edge.target) && edg.target.equals(edge.source)).findFirst().get());
             }
         }
-        network.getEdges().stream().forEach(edge -> {
-            if (edge.residualCapacity == 0 || edge.source.distance < edge.target.distance) {
-                edge.active = false;
-            } else {
-                edge.active = true;
-            }
-        });
-
+        network.updateDeactivatedEdges(edge -> edge.residualCapacity == 0 || edge.source.distance < edge.target.distance);
         return network;
     }
 

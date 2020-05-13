@@ -2,20 +2,26 @@ package math.discrete;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class BelmanFord {
-    public List<Node> calculate(Graph graph, Node start) {
+    public Map<Node, List<Node>> paths = new HashMap<>();
+    public List<Node> cycleNodes = new ArrayList<>();
 
-        List<List<Node>> paths = new ArrayList<>();
+    public boolean calculate(Graph graph, Node start) {
+        paths.clear();
+        cycleNodes.clear();
+
         graph.nodes.forEach(node -> {
             if (node.equals(start)) {
                 node.distance = 0;
             } else {
                 node.distance = Integer.MAX_VALUE / 2;
             }
-            paths.add(new ArrayList<>());
+            paths.put(node, new ArrayList<>());
         });
 
         int i = 1;
@@ -26,16 +32,16 @@ public class BelmanFord {
                 if (edge.target.distance > sum) {
                     edge.target.distance = sum;
 
-                    int changedIndex = graph.nodes.indexOf(edge.target);
-                    int currentIndex = graph.nodes.indexOf(edge.source);
-
-                    List<Node> currentPath = new ArrayList<>(paths.get(currentIndex));
+                    List<Node> currentPath = new ArrayList<>(paths.get(edge.source));
                     currentPath.add(edge.source);
-                    paths.set(changedIndex, currentPath);
+                    paths.put(edge.target, currentPath);
                 }
             }
             i++;
         }
+        graph.nodes.forEach(node -> {
+            paths.get(node).add(node);
+        });
 
         List<Node> negativeNodes = new ArrayList<>();
         for (Edge edge : graph.getEdges()) {
@@ -46,18 +52,16 @@ public class BelmanFord {
         }
 
         if (negativeNodes.isEmpty()) {
-            return new ArrayList<>();
+            return false;
         } else {
-            List<Node> cycleNodes = new ArrayList<>();
-            List<Node> path = paths.get(graph.nodes.indexOf(negativeNodes.get(0)));
-
+            List<Node> path = paths.get(negativeNodes.get(0));
             for (Node node : path) {
                 if (path.stream().filter(current -> current.equals(node)).count() > 1 && !cycleNodes.contains(node)) {
                     cycleNodes.add(node);
                 }
             }
 
-            return cycleNodes;
+            return cycleNodes.size() <= 1;
         }
     }
 }

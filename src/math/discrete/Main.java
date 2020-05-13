@@ -1,18 +1,80 @@
 package math.discrete;
 
-import java.util.List;
-
 import static org.junit.Assert.assertEquals;
 
 public class Main {
     public static void main(String[] args) {
-        simpleMinCostMaxFlowTest1();
+        simpleMinCostMaxFlowTest2();
         simpleMinCostMaxFlowTest();
+        simpleMinCostMaxFlowTest1();
         maxFlowTest();
         maxFlowTest1();
         maxFlowTest2();
         maxFlowTest3();
         belmanFordTest();
+    }
+
+    public static void simpleMinCostMaxFlowTest2() {
+        Graph graph = new Graph();
+
+        Node node0 = new Node();
+        Node node1 = new Node();
+        Node node2 = new Node();
+        Node node3 = new Node();
+        Node node4 = new Node();
+        Node node5 = new Node();
+
+        graph.addNode(node0);
+        graph.addNode(node1);
+        graph.addNode(node2);
+        graph.addNode(node3);
+        graph.addNode(node4);
+        graph.addNode(node5);
+
+        Edge edge01 = new Edge(node0,node1);
+        edge01.capacity = 1;
+        edge01.cost = 1;
+        graph.addEdge(edge01);
+
+        Edge edge02 = new Edge(node0,node2);
+        edge02.capacity = 2;
+        edge02.cost = 1;
+        graph.addEdge(edge02);
+
+        Edge edge13 = new Edge(node1,node3);
+        edge13.capacity = 1;
+        edge13.cost = 1;
+        graph.addEdge(edge13);
+
+        Edge edge14 = new Edge(node1,node4);
+        edge14.capacity = 1;
+        edge14.cost = 1;
+        graph.addEdge(edge14);
+
+        Edge edge23 = new Edge(node2,node3);
+        edge23.capacity = 2;
+        edge23.cost = 1;
+        graph.addEdge(edge23);
+
+        Edge edge24 = new Edge(node2,node4);
+        edge24.capacity = 2;
+        edge24.cost = 1;
+        graph.addEdge(edge24);
+
+        Edge edge35 = new Edge(node3,node5);
+        edge35.capacity = 3;
+        edge35.cost = 1;
+        graph.addEdge(edge35);
+
+        Edge edge45 = new Edge(node4,node5);
+        edge45.capacity = 3;
+        edge45.cost = 1;
+        graph.addEdge(edge45);
+
+        EmondsCarp emondsCarp = new EmondsCarp();
+        emondsCarp.maximumCost = 14;
+        emondsCarp.maxFlowCalculate(graph, true);
+        graph.zeroingFlows();
     }
 
     public static void simpleMinCostMaxFlowTest1() {
@@ -53,122 +115,80 @@ public class Main {
         edge34.cost = 1;
         graph.addEdge(edge34);
 
-        new MinCostMaxFlow().minCostMaxFlowCalculate(graph);
+        EmondsCarp emondsCarp = new EmondsCarp();
+        emondsCarp.maximumCost = 14;
+        emondsCarp.maxFlowCalculate(graph, true);
         graph.zeroingFlows();
     }
 
     public static void simpleMinCostMaxFlowTest() {
         Graph graph = new Graph();
 
-        Node nodes = new Node();
-        graph.addNode(nodes);
+        Node nodeA = new Node();
+        Node nodeB = new Node();
+        Node nodeC = new Node();
+        Node nodeD = new Node();
+        Node nodeE = new Node();
+        Node nodeF = new Node();
+        Node nodeG = new Node();
 
-        Node node1 = new Node();
-        graph.addNode(node1);
-
-        Node node2 = new Node();
-        graph.addNode(node2);
-
-        Node node3 = new Node();
-        graph.addNode(node3);
-
-        Node node4 = new Node();
-        graph.addNode(node4);
-
-        Node node5 = new Node();
-        graph.addNode(node5);
-
-        Node node6 = new Node();
-        graph.addNode(node6);
-
-        Node nodet = new Node();
-        graph.addNode(nodet);
-
-        Edge edgeS1 = new Edge(nodes, node1);
-        edgeS1.capacity = 9;
-        graph.addEdge(edgeS1);
-
-        Edge edgeS3 = new Edge(nodes, node3);
-        edgeS3.capacity = 3;
-        graph.addEdge(edgeS3);
-
-        Edge edgeS5 = new Edge(nodes, node5);
-        edgeS5.capacity = 1;
-        graph.addEdge(edgeS5);
+        graph.addNode(nodeA);
+        graph.addNode(nodeB);
+        graph.addNode(nodeC);
+        graph.addNode(nodeD);
+        graph.addNode(nodeE);
+        graph.addNode(nodeF);
+        graph.addNode(nodeG);
 
 
-        Edge edge13 = new Edge(node1, node3);
-        edge13.capacity = 2;
-        graph.addEdge(edge13);
+        Edge edgeAB = new Edge(nodeA, nodeB);
+        edgeAB.capacity = 3;
+        graph.addEdge(edgeAB);
 
-        Edge edge12 = new Edge(node1, node2);
-        edge12.capacity = 2;
-        graph.addEdge(edge12);
+        Edge edgeAD = new Edge(nodeA, nodeD);
+        edgeAD.capacity = 3;
+        graph.addEdge(edgeAD);
 
-        Edge edge14 = new Edge(node1, node4);
-        edge14.capacity = 5;
-        graph.addEdge(edge14);
+        Edge edgeCA = new Edge(nodeC, nodeA);
+        edgeCA.capacity = 3;
+        graph.addEdge(edgeCA);
 
+        Edge edgeBC = new Edge(nodeB, nodeC);
+        edgeBC.capacity = 4;
+        graph.addEdge(edgeBC);
 
-        Edge edge2t = new Edge(node2, nodet);
-        edge2t.capacity = 6;
-        graph.addEdge(edge2t);
+        Edge edgeCD = new Edge(nodeC, nodeD);
+        edgeCD.capacity = 1;
+        graph.addEdge(edgeCD);
 
+        Edge edgeCE = new Edge(nodeC, nodeE);
+        edgeCE.capacity = 2;
+        graph.addEdge(edgeCE);
 
-        Edge edge34 = new Edge(node3, node4);
-        edge34.capacity = 2;
-        graph.addEdge(edge34);
+        Edge edgeEB = new Edge(nodeE, nodeB);
+        edgeEB.capacity = 1;
+        graph.addEdge(edgeEB);
 
-        Edge edge35 = new Edge(node3, node5);
-        edge35.capacity = 7;
-        graph.addEdge(edge35);
+        Edge edgeDE = new Edge(nodeD, nodeE);
+        edgeDE.capacity = 2;
+        graph.addEdge(edgeDE);
 
+        Edge edgeDF = new Edge(nodeD, nodeF);
+        edgeDF.capacity = 6;
+        graph.addEdge(edgeDF);
 
-        Edge edge56 = new Edge(node5, node6);
-        edge56.capacity = 9;
-        graph.addEdge(edge56);
+        Edge edgeFG = new Edge(nodeF, nodeG);
+        edgeFG.capacity = 9;
+        graph.addEdge(edgeFG);
 
+        Edge edgeEG = new Edge(nodeE, nodeG);
+        edgeEG.capacity = 1;
+        graph.addEdge(edgeEG);
 
-        Edge edge42 = new Edge(node4, node2);
-        edge42.capacity = 1;
-        graph.addEdge(edge42);
-
-        Edge edge45 = new Edge(node4, node5);
-        edge45.capacity = 1;
-        graph.addEdge(edge45);
-
-        Edge edge4T = new Edge(node4, nodet);
-        edge4T.capacity = 2;
-        graph.addEdge(edge4T);
-
-        Edge edge6T = new Edge(node6, nodet);
-        edge6T.capacity = 8;
-        graph.addEdge(edge6T);
-
-        Edge edge64 = new Edge(node6, node4);
-        edge64.capacity = 3;
-        graph.addEdge(edge64);
-
-
-        String rightResult = "0 -> 1 9/9\n" +
-                "0 -> 3 3/3\n" +
-                "0 -> 5 1/1\n" +
-                "1 -> 3 2/2\n" +
-                "1 -> 2 2/2\n" +
-                "1 -> 4 5/5\n" +
-                "2 -> 7 3/6\n" +
-                "3 -> 4 5/2\n" +
-                "3 -> 5 6/7\n" +
-                "5 -> 6 8/9\n" +
-                "4 -> 2 1/1\n" +
-                "4 -> 5 1/1\n" +
-                "4 -> 7 2/2\n" +
-                "6 -> 7 8/8\n" +
-                "6 -> 4 0/3\n";
-
-
-        new MinCostMaxFlow().minCostMaxFlowCalculate(graph);
-        assertEquals(rightResult, graph.getFlows());
+        EmondsCarp emondsCarp = new EmondsCarp();
+        emondsCarp.maximumCost = Integer.MAX_VALUE;
+        emondsCarp.maxFlowCalculate(graph, true);
+        assertEquals((long) 6, (long) graph.nodes.get(0).neighbours.values().stream().map(edge -> edge.flow).reduce((a, b) -> a + b).get());
 
         graph.zeroingFlows();
     }
@@ -247,9 +267,7 @@ public class Main {
         graph.addEdge(edge85);
 
 
-        List<Node> negativeCycle =
-                new BelmanFord().calculate(graph, node1);
-        int a = 1;
+        new BelmanFord().calculate(graph, node1);
     }
 
     public static void maxFlowTest() {
@@ -309,23 +327,13 @@ public class Main {
         edge4T.capacity = 10;
         graph.addEdge(edge4T);
 
-        String rightResult = "0 -> 1 10/10\n" +
-                "0 -> 2 9/10\n" +
-                "1 -> 3 4/4\n" +
-                "1 -> 2 0/2\n" +
-                "1 -> 4 6/8\n" +
-                "2 -> 4 9/9\n" +
-                "4 -> 3 5/6\n" +
-                "3 -> 5 9/10\n" +
-                "4 -> 5 10/10\n";
-
         new Diniz().maxFlowCalculate(graph);
-        assertEquals(rightResult, graph.getFlows());
+        assertEquals((long) 19, (long) graph.nodes.get(0).neighbours.values().stream().map(edge -> edge.flow).reduce((a, b) -> a + b).get());
 
         graph.zeroingFlows();
 
         new EmondsCarp().maxFlowCalculate(graph);
-        assertEquals(rightResult, graph.getFlows());
+        assertEquals((long) 19, (long) graph.nodes.get(0).neighbours.values().stream().map(edge -> edge.flow).reduce((a, b) -> a + b).get());
     }
 
     public static void maxFlowTest1() {
@@ -392,26 +400,13 @@ public class Main {
         edgeEG.capacity = 1;
         graph.addEdge(edgeEG);
 
-
-        String rightResult = "0 -> 1 3/3\n" +
-                "0 -> 3 3/3\n" +
-                "2 -> 0 0/3\n" +
-                "1 -> 2 3/4\n" +
-                "2 -> 3 1/1\n" +
-                "2 -> 4 2/2\n" +
-                "4 -> 1 0/1\n" +
-                "3 -> 4 3/2\n" +
-                "3 -> 5 5/6\n" +
-                "5 -> 6 5/9\n" +
-                "4 -> 6 1/1\n";
-
         new Diniz().maxFlowCalculate(graph);
-        assertEquals(rightResult, graph.getFlows());
+        assertEquals((long) 6, (long) graph.nodes.get(0).neighbours.values().stream().map(edge -> edge.flow).reduce((a, b) -> a + b).get());
 
         graph.zeroingFlows();
 
         new EmondsCarp().maxFlowCalculate(graph);
-        assertEquals(rightResult, graph.getFlows());
+        assertEquals((long) 6, (long) graph.nodes.get(0).neighbours.values().stream().map(edge -> edge.flow).reduce((a, b) -> a + b).get());
     }
 
     public static void maxFlowTest2() {
@@ -475,23 +470,13 @@ public class Main {
         edgeFG.capacity = 10;
         graph.addEdge(edgeFG);
 
-        String rightResult = "0 -> 1 20/20\n" +
-                "0 -> 2 12/15\n" +
-                "1 -> 3 0/4\n" +
-                "2 -> 3 3/4\n" +
-                "1 -> 4 20/21\n" +
-                "2 -> 5 9/9\n" +
-                "3 -> 4 2/2\n" +
-                "3 -> 5 1/10\n" +
-                "4 -> 6 22/24\n" +
-                "5 -> 6 10/10\n";
         new Diniz().maxFlowCalculate(graph);
-        assertEquals(rightResult, graph.getFlows());
+        assertEquals((long) 32, (long) graph.nodes.get(0).neighbours.values().stream().map(edge -> edge.flow).reduce((a, b) -> a + b).get());
 
         graph.zeroingFlows();
 
         new EmondsCarp().maxFlowCalculate(graph);
-        assertEquals(rightResult, graph.getFlows());
+        assertEquals((long) 32, (long) graph.nodes.get(0).neighbours.values().stream().map(edge -> edge.flow).reduce((a, b) -> a + b).get());
     }
 
     public static void maxFlowTest3() {
@@ -586,30 +571,12 @@ public class Main {
         edge64.capacity = 3;
         graph.addEdge(edge64);
 
-
-        String rightResult = "0 -> 1 9/9\n" +
-                "0 -> 3 3/3\n" +
-                "0 -> 5 1/1\n" +
-                "1 -> 3 2/2\n" +
-                "1 -> 2 2/2\n" +
-                "1 -> 4 5/5\n" +
-                "2 -> 7 3/6\n" +
-                "3 -> 4 5/2\n" +
-                "3 -> 5 6/7\n" +
-                "5 -> 6 8/9\n" +
-                "4 -> 2 1/1\n" +
-                "4 -> 5 1/1\n" +
-                "4 -> 7 2/2\n" +
-                "6 -> 7 8/8\n" +
-                "6 -> 4 0/3\n";
-
-
         new Diniz().maxFlowCalculate(graph);
-        assertEquals(rightResult, graph.getFlows());
+        assertEquals((long) 12, (long) graph.nodes.get(0).neighbours.values().stream().map(edge -> edge.flow).reduce((a, b) -> a + b).get());
 
         graph.zeroingFlows();
 
         new EmondsCarp().maxFlowCalculate(graph);
-        assertEquals(rightResult, graph.getFlows());
+        assertEquals((long) 12, (long) graph.nodes.get(0).neighbours.values().stream().map(edge -> edge.flow).reduce((a, b) -> a + b).get());
     }
 }

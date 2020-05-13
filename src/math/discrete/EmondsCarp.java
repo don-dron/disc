@@ -4,10 +4,11 @@ import java.util.Iterator;
 import java.util.stream.Collectors;
 
 public class EmondsCarp extends FlowFilling implements IMaxFlow {
-//    public void setMinimumCost(int minimumCost) {
-//        this.minimumCost = minimumCost;
-//    }
     public void maxFlowCalculate(Graph graph) {
+        maxFlowCalculate(graph, false);
+    }
+
+    public void maxFlowCalculate(Graph graph, boolean withMinCost) {
         Graph residualNetwork = graph.buildResidualNetwork();
         while (flowFilling(residualNetwork)) ;
 

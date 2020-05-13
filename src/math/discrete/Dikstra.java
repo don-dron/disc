@@ -20,8 +20,9 @@ public class Dikstra {
             } else {
                 distances.add(Integer.MAX_VALUE / 2);
             }
-            queue.add(node);
             paths.add(new ArrayList<>());
+
+            queue.add(node);
         }
 
         while (!queue.isEmpty()) {
@@ -61,6 +62,10 @@ public class Dikstra {
             paths.get(i).add(graph.nodes.get(i));
             List<Node> path = paths.get(i);
 
+            if (distances.get(i) == Integer.MAX_VALUE / 2) {
+                path = new ArrayList<>();
+            }
+
             List<Edge> shortestPathEdges = new ArrayList<>();
 
             for (int j = 0; j < path.size() - 1; j++) {
@@ -68,7 +73,7 @@ public class Dikstra {
                 shortestPathEdges.add(node.neighbours.get(path.get(j + 1)));
             }
 
-            graph.nodes.get(i).distance = shortestPathEdges.stream().map(edge -> edge.length).reduce((a, b) -> a + b).orElse(0);
+            graph.nodes.get(i).distance = shortestPathEdges.stream().map(edge -> edge.length).reduce((a, b) -> a + b).orElse(-1);
         }
 
 

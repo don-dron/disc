@@ -4,25 +4,25 @@ import java.util.concurrent.Flow;
 import java.util.stream.Collectors;
 
 public class Diniz extends FlowFilling implements IMaxFlow {
-    public boolean findBlockingFlow(Graph layoutNetwork) {
+    public boolean findBlockingFlow(Graph layoutNetwork, boolean withMinCost) {
         boolean flag = true;
         while (flowFilling(layoutNetwork)) {
             flag = false;
         }
         return flag;
     }
-//
-//    public void setMinimumCost(int minimumCost) {
-//        this.minimumCost = minimumCost;
-//    }
 
     public void maxFlowCalculate(Graph graph) {
+        maxFlowCalculate(graph, false);
+    }
+
+    public void maxFlowCalculate(Graph graph, boolean withMinCost) {
         Graph residualNetwork;
         Graph layoutNetwork;
         while (true) {
             residualNetwork = graph.buildResidualNetwork();
             layoutNetwork = residualNetwork.buildLayoutNetwork();
-            boolean flag = findBlockingFlow(layoutNetwork);
+            boolean flag = findBlockingFlow(layoutNetwork, withMinCost);
             if (flag) {
                 break;
             }
