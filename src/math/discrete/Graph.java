@@ -57,13 +57,15 @@ public class Graph {
             Edge newEdge = new Edge(source, target);
             newEdge.flow = edge.flow;
             newEdge.capacity = edge.capacity;
-            newEdge.residualCapacity = newEdge.capacity - newEdge.flow;
+            newEdge.cost = edge.cost;
+            newEdge.residualCapacity =newEdge.capacity - newEdge.flow;
             network.addEdge(newEdge);
             newEdge.index = edge.index;
 
             newEdge = new Edge(target, source);
             newEdge.flow = -edge.flow;
             newEdge.capacity = 0;
+            newEdge.cost = -edge.cost;
             newEdge.residualCapacity = newEdge.capacity - newEdge.flow;
             newEdge.type = Edge.EdgeTypes.BACKWARD;
             network.addEdge(newEdge);
@@ -76,9 +78,9 @@ public class Graph {
 
         network.getEdges().stream().forEach(edge -> {
             if (edge.residualCapacity == 0) {
-                edge.length = -1;
+                edge.active = false;
             } else {
-                edge.length = 1;
+                edge.active = true;
             }
         });
         return network;
@@ -92,7 +94,7 @@ public class Graph {
             paths.put(node, new ArrayList<>());
         }
         BFS bfs = new BFS();
-        bfs.filter = edge -> edge.length > 0;
+        bfs.filter = edge -> edge.active;
 
         bfs.listener = (parent, current) -> {
             List<Node> lastPath = parent == null ? new ArrayList<>() : new ArrayList<>(paths.get(parent));
@@ -128,9 +130,9 @@ public class Graph {
         }
         network.getEdges().stream().forEach(edge -> {
             if (edge.residualCapacity == 0 || edge.source.distance < edge.target.distance) {
-                edge.length = -1;
+                edge.active = false;
             } else {
-                edge.length = 1;
+                edge.active = true;
             }
         });
 

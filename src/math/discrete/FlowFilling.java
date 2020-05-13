@@ -5,12 +5,15 @@ import java.util.Collections;
 import java.util.List;
 
 public class FlowFilling {
+//    public int minimumCost = Integer.MAX_VALUE;
+//    public int currentCost;
+
     public boolean flowFilling(Graph residualNetwork) {
         residualNetwork.getEdges().stream().forEach(edge -> {
             if (edge.residualCapacity == 0) {
-                edge.length = -1;
+                edge.active = false;
             } else {
-                edge.length = 1;
+                edge.active = true;
             }
         });
 
@@ -31,6 +34,18 @@ public class FlowFilling {
 
         int minCapacity = Collections.min(shortestPathEdges, (first, second) ->
                 first.residualCapacity - second.residualCapacity).residualCapacity;
+//
+//
+//        int diffCost;
+//        while (minimumCost < currentCost + (diffCost = calculateCostDiff(shortestPathEdges, minCapacity))) {
+//            minCapacity--;
+//
+//            if (minCapacity == 0) {
+//                return false;
+//            }
+//        }
+//
+//        currentCost = currentCost + diffCost;
 
         for (Edge modifyEdge : shortestPathEdges) {
             Edge edge = modifyEdge;
@@ -49,5 +64,9 @@ public class FlowFilling {
             mirrorEdge.residualCapacity = mirrorEdge.capacity - mirrorEdge.flow;
         }
         return true;
+    }
+
+    public int calculateCostDiff(List<Edge> shortestPathEdges, int flow) {
+        return shortestPathEdges.stream().map(edge -> flow * edge.cost).reduce((a, b) -> a + b).get();
     }
 }

@@ -6,11 +6,13 @@ public class Edge {
     public Node target;
     public EdgeTypes type = EdgeTypes.FORWARD;
 
+    public boolean active = true;
     public int flow;
     public int capacity;
     public int length=1;
     public int index;
     public int residualCapacity;
+    public int cost = 1;
 
     public Edge(Node source, Node target) {
         this.source = source;
@@ -30,6 +32,7 @@ public class Edge {
         this.residualCapacity = edge.residualCapacity;
         this.graph = edge.graph;
         this.index = edge.index;
+        this.cost = edge.cost;
 
         source.neighbours.put(target, this);
     }

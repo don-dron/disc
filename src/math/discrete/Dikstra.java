@@ -33,24 +33,21 @@ public class Dikstra {
 
                 Edge edge = current.neighbours.get(changed);
 
-                if (edge != null) {
+                if (edge != null && edge.active) {
                     int edgeLength = edge.length;
 
-                    // Ignore negative edges
-                    if (edgeLength > 0) {
-                        int changedIndex = graph.nodes.indexOf(changed);
-                        int currentIndex = graph.nodes.indexOf(current);
+                    int changedIndex = graph.nodes.indexOf(changed);
+                    int currentIndex = graph.nodes.indexOf(current);
 
-                        int distanceSource = distances.get(currentIndex);
-                        int distanceTarget = distances.get(changedIndex);
+                    int distanceSource = distances.get(currentIndex);
+                    int distanceTarget = distances.get(changedIndex);
 
-                        if (distanceTarget > distanceSource + edgeLength) {
-                            distances.set(changedIndex, distanceSource + edgeLength);
-                            paths.get(changedIndex).add(current);
-                            List<Node> currentPath = new ArrayList<>(paths.get(currentIndex));
-                            currentPath.add(current);
-                            paths.set(changedIndex, currentPath);
-                        }
+                    if (distanceTarget > distanceSource + edgeLength) {
+                        distances.set(changedIndex, distanceSource + edgeLength);
+
+                        List<Node> currentPath = new ArrayList<>(paths.get(currentIndex));
+                        currentPath.add(current);
+                        paths.set(changedIndex, currentPath);
                     }
                 }
 
@@ -61,9 +58,19 @@ public class Dikstra {
         }
 
         for (int i = 0; i < paths.size(); i++) {
-            graph.nodes.get(i).distance = paths.get(i).size();
             paths.get(i).add(graph.nodes.get(i));
+            List<Node> path = paths.get(i);
+
+            List<Edge> shortestPathEdges = new ArrayList<>();
+
+            for (int j = 0; j < path.size() - 1; j++) {
+                Node node = path.get(j);
+                shortestPathEdges.add(node.neighbours.get(path.get(j + 1)));
+            }
+
+            graph.nodes.get(i).distance = shortestPathEdges.stream().map(edge -> edge.length).reduce((a, b) -> a + b).orElse(0);
         }
+
 
         return paths;
     }

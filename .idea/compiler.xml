@@ -9,8 +9,8 @@
         <module name="math.discrete" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="math.discrete" target="1.5" />
+    <bytecodeTargetLevel target="11">
+      <module name="math.discrete" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

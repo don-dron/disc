@@ -1,18 +1,22 @@
 package math.discrete;
 
+import java.util.concurrent.Flow;
 import java.util.stream.Collectors;
 
-public class Diniz {
+public class Diniz extends FlowFilling implements IMaxFlow {
     public boolean findBlockingFlow(Graph layoutNetwork) {
         boolean flag = true;
-        while (new FlowFilling().flowFilling(layoutNetwork)) {
+        while (flowFilling(layoutNetwork)) {
             flag = false;
         }
         return flag;
     }
+//
+//    public void setMinimumCost(int minimumCost) {
+//        this.minimumCost = minimumCost;
+//    }
 
     public void maxFlowCalculate(Graph graph) {
-        graph.zeroingFlows();
         Graph residualNetwork;
         Graph layoutNetwork;
         while (true) {
