@@ -1,4 +1,4 @@
-package math.discrete;
+package math.discrete.core;
 
 public class Edge {
     public Graph graph;
@@ -9,7 +9,7 @@ public class Edge {
     public boolean active = true;
     public int flow;
     public int capacity;
-    public int length=1;
+    public int length = 1;
     public int index;
     public int residualCapacity;
     public int cost = 1;
@@ -39,7 +39,7 @@ public class Edge {
 
     public String toString() {
         return "Edge\n" + graph.nodes.indexOf(source) + " -> " + graph.nodes.indexOf(target) + " " + "Flow: " + flow +
-                " Capacity: " + capacity + " Length: " + length + " ResidualCapacity: " + residualCapacity;
+                " Capacity: " + capacity + " Length: " + length + " ResidualCapacity: " + residualCapacity + " Cost: " + cost;
     }
 
     public enum EdgeTypes {

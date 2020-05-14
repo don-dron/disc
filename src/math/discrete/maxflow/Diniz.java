@@ -1,10 +1,12 @@
-package math.discrete;
+package math.discrete.maxflow;
 
-import java.util.concurrent.Flow;
+import math.discrete.core.Edge;
+import math.discrete.core.Graph;
+
 import java.util.stream.Collectors;
 
-public class Diniz extends FlowFilling implements IMaxFlow {
-    public boolean findBlockingFlow(Graph layoutNetwork, boolean withMinCost) {
+public class Diniz extends FlowFilling {
+    public boolean findBlockingFlow(Graph layoutNetwork) {
         boolean flag = true;
         while (flowFilling(layoutNetwork)) {
             flag = false;
@@ -12,17 +14,13 @@ public class Diniz extends FlowFilling implements IMaxFlow {
         return flag;
     }
 
-    public void maxFlowCalculate(Graph graph) {
-        maxFlowCalculate(graph, false);
-    }
-
-    public void maxFlowCalculate(Graph graph, boolean withMinCost) {
+    public void maxFlowCalculate(Graph graph){
         Graph residualNetwork;
         Graph layoutNetwork;
         while (true) {
             residualNetwork = graph.buildResidualNetwork();
             layoutNetwork = residualNetwork.buildLayoutNetwork();
-            boolean flag = findBlockingFlow(layoutNetwork, withMinCost);
+            boolean flag = findBlockingFlow(layoutNetwork);
             if (flag) {
                 break;
             }

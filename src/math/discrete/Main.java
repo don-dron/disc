@@ -1,11 +1,18 @@
 package math.discrete;
 
+import math.discrete.core.Edge;
+import math.discrete.core.Graph;
+import math.discrete.core.Node;
+import math.discrete.maxflow.Diniz;
+import math.discrete.maxflow.EmondsCarp;
+import math.discrete.path.shortest.BelmanFord;
+
 import static org.junit.Assert.assertEquals;
 
 public class Main {
     public static void main(String[] args) {
-        simpleMinCostMaxFlowTest2();
         simpleMinCostMaxFlowTest();
+        simpleMinCostMaxFlowTest2();
         simpleMinCostMaxFlowTest1();
         maxFlowTest();
         maxFlowTest1();
@@ -31,49 +38,49 @@ public class Main {
         graph.addNode(node4);
         graph.addNode(node5);
 
-        Edge edge01 = new Edge(node0,node1);
+        Edge edge01 = new Edge(node0, node1);
         edge01.capacity = 1;
         edge01.cost = 1;
         graph.addEdge(edge01);
 
-        Edge edge02 = new Edge(node0,node2);
+        Edge edge02 = new Edge(node0, node2);
         edge02.capacity = 2;
         edge02.cost = 1;
         graph.addEdge(edge02);
 
-        Edge edge13 = new Edge(node1,node3);
+        Edge edge13 = new Edge(node1, node3);
         edge13.capacity = 1;
-        edge13.cost = 1;
+        edge13.cost = 10;
         graph.addEdge(edge13);
 
-        Edge edge14 = new Edge(node1,node4);
+        Edge edge14 = new Edge(node1, node4);
         edge14.capacity = 1;
         edge14.cost = 1;
         graph.addEdge(edge14);
 
-        Edge edge23 = new Edge(node2,node3);
+        Edge edge23 = new Edge(node2, node3);
         edge23.capacity = 2;
         edge23.cost = 1;
         graph.addEdge(edge23);
 
-        Edge edge24 = new Edge(node2,node4);
+        Edge edge24 = new Edge(node2, node4);
         edge24.capacity = 2;
         edge24.cost = 1;
         graph.addEdge(edge24);
 
-        Edge edge35 = new Edge(node3,node5);
+        Edge edge35 = new Edge(node3, node5);
         edge35.capacity = 3;
         edge35.cost = 1;
         graph.addEdge(edge35);
 
-        Edge edge45 = new Edge(node4,node5);
+        Edge edge45 = new Edge(node4, node5);
         edge45.capacity = 3;
         edge45.cost = 1;
         graph.addEdge(edge45);
 
         EmondsCarp emondsCarp = new EmondsCarp();
-        emondsCarp.maximumCost = 14;
-        emondsCarp.maxFlowCalculate(graph, true);
+        emondsCarp.minCost = true;
+        emondsCarp.maxFlowCalculate(graph);
         graph.zeroingFlows();
     }
 
@@ -117,7 +124,8 @@ public class Main {
 
         EmondsCarp emondsCarp = new EmondsCarp();
         emondsCarp.maximumCost = 14;
-        emondsCarp.maxFlowCalculate(graph, true);
+        emondsCarp.minCost = true;
+        emondsCarp.maxFlowCalculate(graph);
         graph.zeroingFlows();
     }
 
@@ -185,10 +193,18 @@ public class Main {
         edgeEG.capacity = 1;
         graph.addEdge(edgeEG);
 
+        Diniz diniz = new Diniz();
+        diniz.minCost = true;
+        diniz.maxFlowCalculate(graph);
+        assertEquals((long) 5, (long) graph.nodes.get(0).neighbours.values().stream().map(edge -> edge.flow).reduce((a, b) -> a + b).get());
+
+        graph.zeroingFlows();
+
         EmondsCarp emondsCarp = new EmondsCarp();
         emondsCarp.maximumCost = Integer.MAX_VALUE;
-        emondsCarp.maxFlowCalculate(graph, true);
-        assertEquals((long) 6, (long) graph.nodes.get(0).neighbours.values().stream().map(edge -> edge.flow).reduce((a, b) -> a + b).get());
+        emondsCarp.minCost = true;
+        emondsCarp.maxFlowCalculate(graph);
+        assertEquals((long) 5, (long) graph.nodes.get(0).neighbours.values().stream().map(edge -> edge.flow).reduce((a, b) -> a + b).get());
 
         graph.zeroingFlows();
     }
@@ -401,17 +417,16 @@ public class Main {
         graph.addEdge(edgeEG);
 
         new Diniz().maxFlowCalculate(graph);
-        assertEquals((long) 6, (long) graph.nodes.get(0).neighbours.values().stream().map(edge -> edge.flow).reduce((a, b) -> a + b).get());
+        assertEquals((long) 5, (long) graph.nodes.get(0).neighbours.values().stream().map(edge -> edge.flow).reduce((a, b) -> a + b).get());
 
         graph.zeroingFlows();
 
         new EmondsCarp().maxFlowCalculate(graph);
-        assertEquals((long) 6, (long) graph.nodes.get(0).neighbours.values().stream().map(edge -> edge.flow).reduce((a, b) -> a + b).get());
+        assertEquals((long) 5, (long) graph.nodes.get(0).neighbours.values().stream().map(edge -> edge.flow).reduce((a, b) -> a + b).get());
     }
 
     public static void maxFlowTest2() {
         Graph graph = new Graph();
-
 
         Node nodeA = new Node();
         Node nodeB = new Node();

@@ -1,4 +1,4 @@
-package math.discrete;
+package math.discrete.core;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

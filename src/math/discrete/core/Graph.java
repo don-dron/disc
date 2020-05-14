@@ -1,4 +1,6 @@
-package math.discrete;
+package math.discrete.core;
+
+import math.discrete.path.BFS;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -69,20 +71,28 @@ public class Graph {
             newEdge.flow = edge.flow;
             newEdge.capacity = edge.capacity;
             newEdge.cost = edge.cost;
+
             newEdge.length = newEdge.cost;
             newEdge.residualCapacity = newEdge.capacity - newEdge.flow;
+
+            //NOT TOUCH
             network.addEdge(newEdge);
             newEdge.index = edge.index;
+            //
 
             newEdge = new Edge(target, source);
             newEdge.flow = -edge.flow;
             newEdge.capacity = 0;
             newEdge.cost = -edge.cost;
+
             newEdge.length = newEdge.cost;
             newEdge.residualCapacity = newEdge.capacity - newEdge.flow;
             newEdge.type = Edge.EdgeTypes.BACKWARD;
+
+            //NOT TOUCH
             network.addEdge(newEdge);
             newEdge.index = edge.index;
+            //
         }
 
         if (DEBUG) {

@@ -1,4 +1,7 @@
-package math.discrete;
+package math.discrete.path;
+
+import math.discrete.core.Graph;
+import math.discrete.core.Node;
 
 import java.util.Stack;
 

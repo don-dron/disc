@@ -1,4 +1,8 @@
-package math.discrete;
+package math.discrete.path.shortest;
+
+import math.discrete.core.Edge;
+import math.discrete.core.Graph;
+import math.discrete.core.Node;
 
 import java.util.ArrayList;
 import java.util.Comparator;
