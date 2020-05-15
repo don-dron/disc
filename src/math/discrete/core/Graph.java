@@ -1,6 +1,7 @@
 package math.discrete.core;
 
 import math.discrete.path.BFS;
+import math.discrete.path.shortest.Dikstra;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -143,26 +144,11 @@ public class Graph {
     public Graph buildLayoutNetwork() {
         Graph network = new Graph();
 
-        Map<Node, List<Node>> paths = new HashMap<>();
-        for (Node node : nodes) {
-            paths.put(node, new ArrayList<>());
-        }
-        BFS bfs = new BFS();
-        bfs.filter = edge -> edge.active;
-
-        bfs.listener = (parent, current) -> {
-            List<Node> lastPath = parent == null ? new ArrayList<>() : new ArrayList<>(paths.get(parent));
-            paths.remove(current);
-            if (parent != null) {
-                lastPath.add(parent);
-            }
-            paths.put(current, lastPath);
-        };
-        bfs.run(this);
+        Map<Node, List<Edge>> paths =
+                new Dikstra().calculate(this, nodes.get(0));
 
         for (Node node : nodes) {
-            paths.get(node).add(node);
-            node.distance = paths.get(node).size();
+            node.distance = paths.get(node).size() + 1;
         }
 
         for (Node node : nodes) {

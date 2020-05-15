@@ -1,5 +1,8 @@
 package math.discrete.core;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Edge {
     public Graph graph;
     public Node source;
@@ -18,7 +21,14 @@ public class Edge {
         this.source = source;
         this.target = target;
 
-        source.neighbours.put(target, this);
+
+        List<Edge> edges =
+                source.neighbours.get(target);
+        if (edges == null) {
+            edges = new ArrayList<>();
+            source.neighbours.put(target, edges);
+        }
+        edges.add(this);
     }
 
 
@@ -34,7 +44,13 @@ public class Edge {
         this.index = edge.index;
         this.cost = edge.cost;
 
-        source.neighbours.put(target, this);
+        List<Edge> edges =
+                source.neighbours.get(target);
+        if (edges == null) {
+            edges = new ArrayList<>();
+            source.neighbours.put(target, edges);
+        }
+        edges.add(this);
     }
 
     public String toString() {

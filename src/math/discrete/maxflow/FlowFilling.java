@@ -15,30 +15,23 @@ public abstract class FlowFilling implements IMaxFlow {
 
     public abstract void maxFlowCalculate(Graph graph);
 
-    public List<Node> findPath(Graph graph) {
+    public List<Edge> findPath(Graph graph) {
         if (!minCost) {
-            Map<Node, List<Node>> paths = new HashMap<>();
-            for (Node node : graph.nodes) {
-                paths.put(node, new ArrayList<>());
-            }
             BFS bfs = new BFS();
             bfs.filter = edge -> edge.active;
 
-            bfs.listener = (parent, current) -> {
-                List<Node> currentPath = parent == null ? new ArrayList<>() : new ArrayList<>(paths.get(parent));
-                if (parent != null) {
-                    currentPath.add(parent);
-                }
-                paths.put(current, currentPath);
-            };
             bfs.run(graph);
+            Map<Node, Edge> parents = bfs.nodeToParent;
 
-            for (Node node : graph.nodes) {
-                paths.get(node).add(node);
-                node.distance = paths.get(node).size();
+            List<Edge> path = new ArrayList<>();
+            Edge edge = null;
+            Node current = graph.nodes.get(graph.nodes.size() - 1);
+            while ((edge = parents.get(current)) != null) {
+                path.add(edge);
+                current = edge.source;
             }
 
-            return paths.get(graph.nodes.get(graph.nodes.size() - 1));
+            return path;
         } else {
             BelmanFord belmanFord = new BelmanFord();
             belmanFord.calculate(graph, graph.nodes.get(0));
@@ -47,34 +40,43 @@ public abstract class FlowFilling implements IMaxFlow {
         }
     }
 
-    public List<Edge> nodesToEdgesPath(List<Node> shortestPath) {
-        List<Edge> shortestPathEdges = new ArrayList<>();
-
-        for (int i = 0; i < shortestPath.size() - 1; i++) {
-            Node node = shortestPath.get(i);
-            shortestPathEdges.add(node.neighbours.get(shortestPath.get(i + 1)));
-        }
-        return shortestPathEdges;
-    }
-
     public boolean flowFilling(Graph residualNetwork) {
         residualNetwork.updateDeactivatedEdges(edge -> edge.residualCapacity == 0);
 
-        List<Node> shortestPath = findPath(residualNetwork);
+        List<Edge> shortestPathEdges = findPath(residualNetwork);
 
-        if (!(shortestPath.contains(residualNetwork.nodes.get(residualNetwork.nodes.size() - 1))
-                && shortestPath.contains(residualNetwork.nodes.get(0)))) {
+        if (!(shortestPathEdges.stream().anyMatch(edge -> edge.source.equals(residualNetwork.nodes.get(0))) &&
+                shortestPathEdges.stream().anyMatch(edge -> edge.target.equals(residualNetwork.nodes.get(residualNetwork.nodes.size() - 1))))) {
             return false;
         }
-
-        List<Edge> shortestPathEdges = nodesToEdgesPath(shortestPath);
 
         int minCapacity = Collections.min(shortestPathEdges, (first, second) ->
                 first.residualCapacity - second.residualCapacity).residualCapacity;
 
+        minCapacity = calculateNewMinCapacity(shortestPathEdges, minCapacity);
+
+        if (minCapacity == 0) {
+            return false;
+        }
+        currentCost = currentCost + calculateCostDiff(shortestPathEdges, minCapacity);
+
         fillEdges(residualNetwork, shortestPathEdges, minCapacity);
 
         return true;
+    }
+
+    public int calculateNewMinCapacity(List<Edge> shortestPathEdges, int minCapacity) {
+        while (maximumCost < currentCost + calculateCostDiff(shortestPathEdges, minCapacity)) {
+            minCapacity--;
+            if (minCapacity == 0) {
+                return 0;
+            }
+        }
+        return minCapacity;
+    }
+
+    public int calculateCostDiff(List<Edge> shortestPathEdges, int flow) {
+        return shortestPathEdges.stream().map(edge -> flow * edge.cost).reduce((a, b) -> a + b).get();
     }
 
     public void fillEdges(Graph residualNetwork, List<Edge> shortestPathEdges, int minCapacity) {

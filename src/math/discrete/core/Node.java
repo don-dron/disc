@@ -1,13 +1,14 @@
 package math.discrete.core;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Node {
     public Graph graph;
     public NodeTypes type = NodeTypes.NONE;
-    public Map<Node,Edge> neighbours = new LinkedHashMap<>();
+    public Map<Node, List<Edge>> neighbours = new LinkedHashMap<>();
     public int distance=-1;
     public int mark;
 

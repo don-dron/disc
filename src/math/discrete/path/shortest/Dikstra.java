@@ -4,19 +4,16 @@ import math.discrete.core.Edge;
 import math.discrete.core.Graph;
 import math.discrete.core.Node;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.PriorityQueue;
+import java.util.*;
 
 public class Dikstra {
-    public List<List<Node>> calculate(Graph graph, Node start) {
+    public Map<Node, List<Edge>> calculate(Graph graph, Node start) {
         List<Integer> distances = new ArrayList<>();
         Comparator<Node> comparator = (first, second) -> distances.get(graph.nodes.indexOf(first)) - distances.get(graph.nodes.indexOf(second));
 
         PriorityQueue<Node> queue = new PriorityQueue<>(graph.nodes.size(), comparator);
 
-        List<List<Node>> paths = new ArrayList<>();
+        Map<Node, List<Edge>> paths = new HashMap<>();
 
         for (Node node : graph.nodes) {
             if (node.equals(start)) {
@@ -24,7 +21,7 @@ public class Dikstra {
             } else {
                 distances.add(Integer.MAX_VALUE / 2);
             }
-            paths.add(new ArrayList<>());
+            paths.put(node, new ArrayList<>());
 
             queue.add(node);
         }
@@ -36,23 +33,25 @@ public class Dikstra {
             while (!queue.isEmpty()) {
                 Node changed = queue.poll();
 
-                Edge edge = current.neighbours.get(changed);
+                if (current.neighbours.get(changed) != null) {
+                    for (Edge edge : current.neighbours.get(changed)) {
+                        if (edge.active) {
+                            int edgeLength = edge.length;
 
-                if (edge != null && edge.active) {
-                    int edgeLength = edge.length;
+                            int changedIndex = graph.nodes.indexOf(changed);
+                            int currentIndex = graph.nodes.indexOf(current);
 
-                    int changedIndex = graph.nodes.indexOf(changed);
-                    int currentIndex = graph.nodes.indexOf(current);
+                            int distanceSource = distances.get(currentIndex);
+                            int distanceTarget = distances.get(changedIndex);
 
-                    int distanceSource = distances.get(currentIndex);
-                    int distanceTarget = distances.get(changedIndex);
+                            if (distanceTarget > distanceSource + edgeLength) {
+                                distances.set(changedIndex, distanceSource + edgeLength);
 
-                    if (distanceTarget > distanceSource + edgeLength) {
-                        distances.set(changedIndex, distanceSource + edgeLength);
-
-                        List<Node> currentPath = new ArrayList<>(paths.get(currentIndex));
-                        currentPath.add(current);
-                        paths.set(changedIndex, currentPath);
+                                List<Edge> currentPath = new ArrayList<>(paths.get(current));
+                                currentPath.add(edge);
+                                paths.put(changed, currentPath);
+                            }
+                        }
                     }
                 }
 
@@ -63,28 +62,15 @@ public class Dikstra {
         }
 
         for (int i = 0; i < paths.size(); i++) {
-            paths.get(i).add(graph.nodes.get(i));
-            List<Node> path = paths.get(i);
+            List<Edge> shortestPathEdges = paths.get(graph.nodes.get(i));
 
             if (distances.get(i) == Integer.MAX_VALUE / 2) {
-                path = new ArrayList<>();
+                shortestPathEdges = new ArrayList<>();
             }
-
-            List<Edge> shortestPathEdges = new ArrayList<>();
-
-            for (int j = 0; j < path.size() - 1; j++) {
-                Node node = path.get(j);
-                shortestPathEdges.add(node.neighbours.get(path.get(j + 1)));
-            }
-
             graph.nodes.get(i).distance = shortestPathEdges.stream().map(edge -> edge.length).reduce((a, b) -> a + b).orElse(-1);
         }
 
 
         return paths;
-    }
-
-    public List<Node> getShortestPath(Graph graph, Node source, Node target) {
-        return calculate(graph, source).get(graph.nodes.indexOf(target));
     }
 }

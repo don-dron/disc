@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class BelmanFord {
-    public Map<Node, List<Node>> paths = new HashMap<>();
+    public Map<Node, List<Edge>> paths = new HashMap<>();
     public List<Node> cycleNodes = new ArrayList<>();
 
     public boolean calculate(Graph graph, Node start) {
@@ -35,16 +35,13 @@ public class BelmanFord {
                 if (edge.target.distance > sum) {
                     edge.target.distance = sum;
 
-                    List<Node> currentPath = new ArrayList<>(paths.get(edge.source));
-                    currentPath.add(edge.source);
+                    List<Edge> currentPath = new ArrayList<>(paths.get(edge.source));
+                    currentPath.add(edge);
                     paths.put(edge.target, currentPath);
                 }
             }
             i++;
         }
-        graph.nodes.forEach(node -> {
-            paths.get(node).add(node);
-        });
 
         List<Node> negativeNodes = new ArrayList<>();
         for (Edge edge : graph.getEdges()) {
@@ -57,7 +54,9 @@ public class BelmanFord {
         if (negativeNodes.isEmpty()) {
             return false;
         } else {
-            List<Node> path = paths.get(negativeNodes.get(0));
+            List<Node> path = paths.get(negativeNodes.get(0)).stream().map(edge -> edge.target).collect(Collectors.toList());
+            path.add(negativeNodes.get(0));
+
             for (Node node : path) {
                 if (path.stream().filter(current -> current.equals(node)).count() > 1 && !cycleNodes.contains(node)) {
                     cycleNodes.add(node);
