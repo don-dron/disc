@@ -4,19 +4,18 @@ import math.discrete.core.Edge;
 import math.discrete.core.Graph;
 import math.discrete.core.Node;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class BelmanFord {
+    public Map<Node, Edge> parents = new HashMap<>();
     public Map<Node, List<Edge>> paths = new HashMap<>();
-    public List<Node> cycleNodes = new ArrayList<>();
+    public List<Edge> cycleEdges = new ArrayList<>();
 
     public boolean calculate(Graph graph, Node start) {
         paths.clear();
-        cycleNodes.clear();
+        cycleEdges.clear();
+        parents.clear();
 
         graph.nodes.forEach(node -> {
             if (node.equals(start)) {
@@ -27,43 +26,49 @@ public class BelmanFord {
             paths.put(node, new ArrayList<>());
         });
 
-        int i = 1;
+        Node cycleNode = null;
+        int i = 0;
         int size = graph.nodes.size();
         while (i < size) {
+            cycleNode = null;
             for (Edge edge : graph.getEdges().stream().filter(edge -> edge.active).collect(Collectors.toList())) {
                 int sum = edge.source.distance + edge.length;
-                if (edge.target.distance > sum) {
+                if (edge.active && edge.target.distance > sum) {
                     edge.target.distance = sum;
 
+                    cycleNode = edge.target;
                     List<Edge> currentPath = new ArrayList<>(paths.get(edge.source));
                     currentPath.add(edge);
                     paths.put(edge.target, currentPath);
+
+                    parents.put(edge.target, edge);
                 }
             }
             i++;
         }
 
-        List<Node> negativeNodes = new ArrayList<>();
-        for (Edge edge : graph.getEdges()) {
-            int sum = edge.source.distance + edge.length;
-            if (edge.target.distance > sum) {
-                negativeNodes.add(edge.target);
-            }
-        }
-
-        if (negativeNodes.isEmpty()) {
+        if (cycleNode == null) {
             return false;
         } else {
-            List<Node> path = paths.get(negativeNodes.get(0)).stream().map(edge -> edge.target).collect(Collectors.toList());
-            path.add(negativeNodes.get(0));
+            Node startCycle = cycleNode;
 
-            for (Node node : path) {
-                if (path.stream().filter(current -> current.equals(node)).count() > 1 && !cycleNodes.contains(node)) {
-                    cycleNodes.add(node);
-                }
+            for (int j = 0; j < graph.nodes.size(); j++) {
+                startCycle = parents.get(startCycle).source;
             }
 
-            return cycleNodes.size() <= 1;
+            List<Edge> cycle = new ArrayList<>();
+            Edge edge = null;
+            for (Node current = startCycle; ; current =(edge = parents.get(current)).source) {
+                if (current.equals(startCycle) && cycle.size() > 1) {
+                    break;
+                }
+                cycle.add(edge);
+            }
+            Collections.reverse(cycle);
+
+            cycleEdges = cycle;
+
+            return true;
         }
     }
 }

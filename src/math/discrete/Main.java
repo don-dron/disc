@@ -55,7 +55,7 @@ public class Main {
         graph.addEdge(edge23);
 
         EmondsCarp emondsCarp = new EmondsCarp();
-        emondsCarp.minCost = false;
+        emondsCarp.minCost = true;
         emondsCarp.maxFlowCalculate(graph);
         graph.zeroingFlows();
     }
@@ -172,6 +172,9 @@ public class Main {
         diniz.minCost = true;
         diniz.maximumCost = 14;
         diniz.maxFlowCalculate(graph);
+
+        graph.zeroingFlows();
+
     }
 
     public static void simpleMinCostMaxFlowTest() {

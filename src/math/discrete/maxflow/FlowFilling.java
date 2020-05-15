@@ -16,27 +16,42 @@ public abstract class FlowFilling implements IMaxFlow {
     public abstract void maxFlowCalculate(Graph graph);
 
     public List<Edge> findPath(Graph graph) {
-        if (!minCost) {
-            BFS bfs = new BFS();
-            bfs.filter = edge -> edge.active;
+        BFS bfs = new BFS();
+        bfs.filter = edge -> edge.active;
 
-            bfs.run(graph);
-            Map<Node, Edge> parents = bfs.nodeToParent;
+        bfs.run(graph);
+        Map<Node, Edge> parents = bfs.nodeToParent;
 
-            List<Edge> path = new ArrayList<>();
-            Edge edge = null;
-            Node current = graph.nodes.get(graph.nodes.size() - 1);
-            while ((edge = parents.get(current)) != null) {
-                path.add(edge);
-                current = edge.source;
+        List<Edge> path = new ArrayList<>();
+        Edge edge = null;
+        Node current = graph.nodes.get(graph.nodes.size() - 1);
+        while ((edge = parents.get(current)) != null) {
+            path.add(edge);
+            current = edge.source;
+        }
+
+        return path;
+    }
+
+    public void removeNegativeCycles(Graph graph) {
+        BelmanFord belmanFord = new BelmanFord();
+        while (belmanFord.calculate(graph, graph.nodes.get(0))) {
+            graph.updateDeactivatedEdges(edge -> edge.residualCapacity == 0);
+            List<Edge> cycle = belmanFord.cycleEdges;
+
+            int minCapacity = Collections.min(cycle, (first, second) ->
+                    first.residualCapacity - second.residualCapacity).residualCapacity;
+
+            for (Edge modifyEdge : cycle) {
+                Edge edge = modifyEdge;
+                Edge mirrorEdge = graph.getEdges().stream().filter(edges -> edges.source.equals(modifyEdge.target) && edges.target.equals(modifyEdge.source)).findFirst().get();
+
+                edge.flow = edge.flow + minCapacity;
+                mirrorEdge.flow = -edge.flow;
+
+                edge.residualCapacity = (edge.capacity - edge.flow);
+                mirrorEdge.residualCapacity = (mirrorEdge.capacity - mirrorEdge.flow);
             }
-
-            return path;
-        } else {
-            BelmanFord belmanFord = new BelmanFord();
-            belmanFord.calculate(graph, graph.nodes.get(0));
-
-            return belmanFord.paths.get(graph.nodes.get(graph.nodes.size() - 1));
         }
     }
 
