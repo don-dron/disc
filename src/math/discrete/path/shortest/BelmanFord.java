@@ -57,9 +57,9 @@ public class BelmanFord {
             }
 
             List<Edge> cycle = new ArrayList<>();
-            Edge edge = null;
-            for (Node current = startCycle; ; current =(edge = parents.get(current)).source) {
-                if (current.equals(startCycle) && cycle.size() > 1) {
+            Edge edge = parents.get(startCycle);
+            for (Node current = edge.source; ; current = (edge = parents.get(current)).source) {
+                if (current.equals(startCycle) && cycle.size() > 1 || cycle.contains(edge)) {
                     break;
                 }
                 cycle.add(edge);

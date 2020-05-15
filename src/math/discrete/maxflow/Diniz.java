@@ -14,11 +14,13 @@ public class Diniz extends FlowFilling {
         return flag;
     }
 
-    public void maxFlowCalculate(Graph graph){
+    public Graph maxFlowCalculate(Graph graph) {
+        Graph copyGraph = new Graph(graph);
+
         Graph residualNetwork;
         Graph layoutNetwork;
         while (true) {
-            residualNetwork = graph.buildResidualNetwork();
+            residualNetwork = copyGraph.buildResidualNetwork();
             layoutNetwork = residualNetwork.buildLayoutNetwork();
             boolean flag = findBlockingFlow(layoutNetwork);
             if (flag) {
@@ -26,8 +28,11 @@ public class Diniz extends FlowFilling {
             }
 
             for (Edge edge : layoutNetwork.getEdges().stream().filter(edge -> edge.type == Edge.EdgeTypes.FORWARD).collect(Collectors.toList())) {
-                graph.getEdges().get(edge.index).flow = edge.flow;
+                copyGraph.getEdges().get(edge.index).flow = edge.flow;
             }
         }
+        residualNetwork = copyGraph.buildResidualNetwork();
+
+        return residualNetwork;
     }
 }

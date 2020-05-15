@@ -7,30 +7,53 @@ import math.discrete.path.BFS;
 import math.discrete.path.shortest.BelmanFord;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class FlowFilling implements IMaxFlow {
     public int maximumCost = Integer.MAX_VALUE;
     public int currentCost;
-    public boolean minCost;
+    private boolean minCost;
 
-    public abstract void maxFlowCalculate(Graph graph);
+    public abstract Graph maxFlowCalculate(Graph graph);
+
+    public Graph minCostMaxFlowCalculate(Graph graph) {
+        minCost = true;
+
+        Graph residualNetwork = maxFlowCalculate(graph);
+        removeNegativeCycles(residualNetwork);
+
+        return residualNetwork;
+    }
 
     public List<Edge> findPath(Graph graph) {
-        BFS bfs = new BFS();
-        bfs.filter = edge -> edge.active;
+        if (true) {
+            BFS bfs = new BFS();
+            bfs.filter = edge -> edge.active;
 
-        bfs.run(graph);
-        Map<Node, Edge> parents = bfs.nodeToParent;
+            bfs.run(graph);
+            Map<Node, Edge> parents = bfs.nodeToParent;
 
-        List<Edge> path = new ArrayList<>();
-        Edge edge = null;
-        Node current = graph.nodes.get(graph.nodes.size() - 1);
-        while ((edge = parents.get(current)) != null) {
-            path.add(edge);
-            current = edge.source;
+            List<Edge> path = new ArrayList<>();
+            Edge edge = null;
+            Node current = graph.nodes.get(graph.nodes.size() - 1);
+            while ((edge = parents.get(current)) != null) {
+                path.add(edge);
+                current = edge.source;
+            }
+            return path;
+        } else {
+
+            BelmanFord belmanFord = new BelmanFord();
+            belmanFord.calculate(graph, graph.nodes.get(0));
+
+            if (!belmanFord.cycleEdges.isEmpty()) {
+                removeNegativeCycles(graph);
+                graph.updateDeactivatedEdges(edge -> edge.residualCapacity == 0);
+                return findPath(graph);
+            } else {
+                return belmanFord.paths.get(graph.nodes.get(graph.nodes.size() - 1));
+            }
         }
-
-        return path;
     }
 
     public void removeNegativeCycles(Graph graph) {
@@ -44,7 +67,10 @@ public abstract class FlowFilling implements IMaxFlow {
 
             for (Edge modifyEdge : cycle) {
                 Edge edge = modifyEdge;
-                Edge mirrorEdge = graph.getEdges().stream().filter(edges -> edges.source.equals(modifyEdge.target) && edges.target.equals(modifyEdge.source)).findFirst().get();
+                Edge mirrorEdge = graph.getEdges().stream().filter(edges -> modifyEdge.type == Edge.EdgeTypes.FORWARD ?
+                        edges.type == Edge.EdgeTypes.BACKWARD : edges.type == Edge.EdgeTypes.FORWARD
+                        && edges.source.equals(modifyEdge.target)
+                        && edges.target.equals(modifyEdge.source)).findFirst().get();
 
                 edge.flow = edge.flow + minCapacity;
                 mirrorEdge.flow = -edge.flow;

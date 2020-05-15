@@ -16,6 +16,43 @@ public class Graph {
 
     }
 
+    public Graph(Graph graph) {
+        this.nodes = new ArrayList<>();
+        this.edges = new ArrayList<>();
+
+        Map<Node, Node> oldToNewNode = new HashMap<>();
+        for (Node node : graph.nodes) {
+            Node newNode = new Node();
+            oldToNewNode.put(node, newNode);
+            nodes.add(newNode);
+        }
+
+        for (Edge edge : graph.getEdges()) {
+            Node newSource = oldToNewNode.get(edge.source);
+            Node newTarget = oldToNewNode.get(edge.target);
+            Edge newEdge = new Edge(newSource, newTarget);
+            newEdge.source = newSource;
+            newEdge.target = newTarget;
+            newEdge.flow = edge.flow;
+            newEdge.capacity = edge.capacity;
+            newEdge.length = edge.length;
+            newEdge.type = edge.type;
+            newEdge.residualCapacity = edge.residualCapacity;
+            newEdge.cost = edge.cost;
+
+            List<Edge> edges =
+                    newSource.neighbours.get(newTarget);
+            if (edges == null) {
+                edges = new ArrayList<>();
+                newSource.neighbours.put(newTarget, edges);
+            }
+            newEdge.index = this.edges.size();
+            edges.add(newEdge);
+            newEdge.graph = this;
+            this.edges.add(newEdge);
+        }
+    }
+
     public Iterator<Edge> getEdgesIterator() {
         return edges.iterator();
     }
@@ -104,43 +141,6 @@ public class Graph {
         return network;
     }
 
-    public Graph buildCostResidualNetwork() {
-        Graph network = new Graph();
-
-        for (Node node : nodes) {
-            Node newNode = new Node(node);
-            newNode.neighbours.clear();
-            network.addNode(newNode);
-        }
-
-        for (Edge edge : edges) {
-            Node source = network.nodes.get(nodes.indexOf(edge.source));
-            Node target = network.nodes.get(nodes.indexOf(edge.target));
-
-            Edge newEdge = new Edge(source, target);
-            newEdge.flow = edge.flow;
-            newEdge.capacity = edge.capacity;
-            newEdge.cost = edge.cost;
-            newEdge.length = newEdge.cost;
-            newEdge.residualCapacity = newEdge.cost * (newEdge.capacity - newEdge.flow);
-            network.addEdge(newEdge);
-            newEdge.index = edge.index;
-
-            newEdge = new Edge(target, source);
-            newEdge.flow = -edge.flow;
-            newEdge.capacity = 0;
-            newEdge.cost = -edge.cost;
-            newEdge.length = newEdge.cost;
-            newEdge.residualCapacity = newEdge.cost * (newEdge.capacity - newEdge.flow);
-            newEdge.type = Edge.EdgeTypes.BACKWARD;
-            network.addEdge(newEdge);
-            newEdge.index = edge.index;
-        }
-
-        network.updateDeactivatedEdges(edge -> edge.residualCapacity == 0);
-        return network;
-    }
-
     public Graph buildLayoutNetwork() {
         Graph network = new Graph();
 
@@ -167,6 +167,7 @@ public class Graph {
 
                 Edge newMirror = new Edge(target, source);
                 addEdgeToLayoutNetwork(network, newMirror, edges.stream().filter(edg -> edg.source.equals(edge.target) && edg.target.equals(edge.source)).findFirst().get());
+                newMirror.type = Edge.EdgeTypes.BACKWARD;
             }
         }
         network.updateDeactivatedEdges(edge -> edge.residualCapacity == 0 || edge.source.distance < edge.target.distance);
